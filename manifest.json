@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "求职投递追踪",
+  "version": "0.2.0",
+  "description": "投递简历后一键记录：自动抓取公司/岗位/链接，同步到飞书多维表格",
+  "author": "Zheyi-D",
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "scripting"
+  ],
+
+  "host_permissions": [
+    "<all_urls>"
+  ],
+
+  "action": {
+    "default_title": "记录本次投递"
+  },
+
+  "side_panel": {
+    "default_path": "sidepanel/sidepanel.html"
+  },
+
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+
+  "options_page": "options/options.html"
+}

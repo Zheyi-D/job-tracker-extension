@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <header class="header">
+    <span>📋 记录本次投递</span>
+    <button id="btn-rescrape" class="icon-btn" title="重新抓取当前页面">↻ 重新抓取</button>
+  </header>
+
+  <!-- 未配置引导 -->
+  <div id="view-setup" class="view hidden">
+    <p class="setup-text">首次使用需要先配置飞书多维表格凭证，配置页内附完整图文步骤。</p>
+    <button id="btn-open-options" class="btn primary">去配置</button>
+  </div>
+
+  <!-- 确认表单 -->
+  <div id="view-form" class="view hidden">
+    <div id="dup-banner" class="banner hidden"></div>
+
+    <label class="field">
+      <span>公司</span>
+      <input id="f-company" type="text" placeholder="公司名称" autocomplete="off">
+    </label>
+    <label class="field">
+      <span>岗位</span>
+      <input id="f-position" type="text" placeholder="岗位名称" autocomplete="off">
+    </label>
+    <label class="field">
+      <span>投递时间</span>
+      <input id="f-time" type="datetime-local">
+    </label>
+    <label class="field">
+      <span>链接</span>
+      <input id="f-url" type="url" placeholder="https://" autocomplete="off">
+    </label>
+    <label class="field">
+      <span>状态</span>
+      <select id="f-status"></select>
+    </label>
+    <label class="field">
+      <span>备注</span>
+      <textarea id="f-note" rows="2" placeholder="选填"></textarea>
+    </label>
+
+    <div id="msg" class="msg hidden"></div>
+
+    <div class="actions">
+      <button id="btn-save" class="btn primary">保存到飞书</button>
+      <button id="btn-save-local" class="btn secondary hidden">仅保存到本地</button>
+    </div>
+
+    <footer class="footer">
+      <span id="scrape-hint" class="hint"></span>
+      <a id="link-options" href="#">设置</a>
+    </footer>
+
+    <div class="copyright">
+      © 2026 <a href="https://github.com/Zheyi-D" target="_blank">Zheyi-D</a> · <a href="mailto:dddzzzyyy@agent.qq.com">dddzzzyyy@agent.qq.com</a>
+    </div>
+  </div>
+
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>
