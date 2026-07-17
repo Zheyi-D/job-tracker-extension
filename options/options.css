@@ -190,3 +190,35 @@ input:focus { outline: none; border-color: var(--primary); }
   text-decoration: none;
 }
 .copyright a:hover { text-decoration: underline; }
+
+/* 更新提示 */
+.update-card {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: #fff;
+  border: none;
+}
+.update-card.hidden { display: none; }
+.update-card h2 { color: #fff; }
+.update-body {
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: 0.9;
+  white-space: pre-line;
+  max-height: 100px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.update-card .update-actions .btn {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.12);
+}
+.update-card .update-actions .btn:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.22);
+}
+.update-card .note {
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 8px;
+  font-size: 12px;
+}

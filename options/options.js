@@ -19,6 +19,12 @@ async function init() {
   // 粘贴多维表格完整链接时自动解析 app_token / table_id
   $('c-app-token').addEventListener('change', parseBaseUrl);
   $('c-app-token').addEventListener('blur', parseBaseUrl);
+
+  // 版本更新检测
+  showUpdateIfAvailable();
+  $('update-dismiss').addEventListener('click', () => {
+    $('update-card').classList.add('hidden');
+  });
 }
 
 // ---------- 配置 ----------
@@ -205,8 +211,8 @@ async function onResetAll() {
     '不影响飞书表格中已同步的数据。'
   );
   if (!confirmed) return;
-  await chrome.storage.local.remove([STORAGE_KEYS.config, STORAGE_KEYS.history]);
-  await chrome.storage.session.remove([STORAGE_KEYS.draft, STORAGE_KEYS.token]);
+  await chrome.storage.local.remove([STORAGE_KEYS.config, STORAGE_KEYS.history, STORAGE_KEYS.updateInfo]);
+  await chrome.storage.session.remove([STORAGE_KEYS.draft, STORAGE_KEYS.token, STORAGE_KEYS.updateDismissed]);
   // 清空页面上的表单显示
   for (const id of ['c-app-id', 'c-app-secret', 'c-app-token', 'c-table-id']) $(id).value = '';
   for (const key of MAP_KEYS) $(`m-${key}`).value = '';
@@ -227,4 +233,16 @@ function formatDate(ts) {
   const d = new Date(ts);
   const pad = n => String(n).padStart(2, '0');
   return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+// ---------- 更新提示 ----------
+
+async function showUpdateIfAvailable() {
+  const resp = await chrome.runtime.sendMessage({ type: 'JT_CHECK_UPDATE' });
+  if (!resp || !resp.hasUpdate || !resp.info) return;
+  $('update-version').textContent = 'v' + resp.info.version;
+  const body = (resp.info.body || '').replace(/\r/g, '').trim();
+  $('update-body').textContent = body.length > 250 ? body.slice(0, 250) + '…' : body;
+  $('update-link').href = resp.info.url || '#';
+  $('update-card').classList.remove('hidden');
 }

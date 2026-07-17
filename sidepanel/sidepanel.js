@@ -42,6 +42,10 @@ async function init() {
   chrome.tabs.onUpdated.addListener((_tabId, changeInfo, t) => {
     if (changeInfo.status === 'complete' && t.active) onTabChanged();
   });
+
+  // 版本更新检测
+  showUpdateIfAvailable();
+  $('update-dismiss').addEventListener('click', () => dismissUpdate());
 }
 
 async function onTabChanged() {
@@ -256,4 +260,31 @@ function toLocalInputValue(d) {
   const pad = n => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}` +
     `T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+// ---------- 更新提示 ----------
+
+let dismissedVersion = '';
+
+async function showUpdateIfAvailable() {
+  const resp = await chrome.runtime.sendMessage({ type: 'JT_CHECK_UPDATE' });
+  if (!resp || !resp.hasUpdate || !resp.info) return;
+  // 检查是否已在本会话中关闭过此版本
+  if (resp.info.version === dismissedVersion) return;
+  const $banner = $('update-banner');
+  $('update-version').textContent = 'v' + resp.info.version;
+  // 截取 changelog 前 200 字
+  const body = (resp.info.body || '').replace(/\r/g, '').trim();
+  $('update-body').textContent = body.length > 200 ? body.slice(0, 200) + '…' : body;
+  $('update-link').href = resp.info.url || '#';
+  $banner.classList.remove('hidden');
+}
+
+async function dismissUpdate() {
+  const resp = await chrome.runtime.sendMessage({ type: 'JT_CHECK_UPDATE' });
+  if (resp && resp.info) {
+    dismissedVersion = resp.info.version;
+    await chrome.runtime.sendMessage({ type: 'JT_DISMISS_UPDATE', version: resp.info.version });
+  }
+  $('update-banner').classList.add('hidden');
 }

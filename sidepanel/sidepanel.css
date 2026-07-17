@@ -171,3 +171,53 @@ input.low-confidence {
   text-decoration: none;
 }
 .copyright a:hover { text-decoration: underline; }
+
+/* 更新提示 */
+.update-banner {
+  margin: 0 -16px -12px;
+  padding: 12px 16px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+}
+.update-banner.hidden { display: none; }
+.update-title {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.update-body {
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0.9;
+  max-height: 72px;
+  overflow: hidden;
+  white-space: pre-line;
+}
+.update-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  font-size: 12px;
+}
+.update-link {
+  color: #fff;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.update-hint {
+  flex: 1;
+  opacity: 0.7;
+  font-size: 11px;
+}
+.update-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  opacity: 0.7;
+}
+.update-close:hover { opacity: 1; }

@@ -6,7 +6,8 @@ import {
   getHistory, normalizeUrl
 } from './lib/storage.js';
 import {
-  DEFAULT_FIELD_MAP, REQUIRED_FIELDS, EXPECTED_FIELD_TYPES, FIELD_TYPE_NAMES
+  DEFAULT_FIELD_MAP, REQUIRED_FIELDS, EXPECTED_FIELD_TYPES, FIELD_TYPE_NAMES,
+  STORAGE_KEYS, UPDATE_REPO_API, UPDATE_CHECK_INTERVAL_MIN
 } from './lib/constants.js';
 
 // 点击工具栏图标即打开/关闭侧边栏（与 auto-fill-extension 同交互）
@@ -25,6 +26,8 @@ async function handle(message) {
     case 'JT_SAVE_LOCAL': return saveLocal(message.record);
     case 'JT_TEST_CONNECTION': return testConnection(message.config);
     case 'JT_RETRY_SYNC': return retrySync(message.historyId);
+    case 'JT_CHECK_UPDATE': return checkUpdateAndRespond();
+    case 'JT_DISMISS_UPDATE': return dismissUpdate(message.version);
     default: return { ok: false, error: `未知消息类型：${message.type}` };
   }
 }
@@ -125,3 +128,72 @@ async function testConnection(rawConfig) {
     error: missing.length ? `连接成功，但表格缺少字段：${missing.join('、')}` : ''
   };
 }
+
+// ---------- 版本更新检测 ----------
+
+function compareVersions(a, b) {
+  const pa = (a || '0.0.0').split('.').map(Number);
+  const pb = (b || '0.0.0').split('.').map(Number);
+  for (let i = 0; i < 3; i++) {
+    if ((pa[i] || 0) > (pb[i] || 0)) return 1;
+    if ((pa[i] || 0) < (pb[i] || 0)) return -1;
+  }
+  return 0;
+}
+
+async function checkUpdateCore() {
+  try {
+    const resp = await fetch(UPDATE_REPO_API, { headers: { Accept: 'application/vnd.github+json' } });
+    if (!resp.ok) return null;
+    const release = await resp.json();
+    const remoteVer = (release.tag_name || '').replace(/^v/, '');
+    const localVer = chrome.runtime.getManifest().version;
+    if (compareVersions(remoteVer, localVer) > 0) {
+      const info = {
+        version: remoteVer,
+        tag: release.tag_name,
+        body: release.body || '',
+        url: release.html_url || '',
+        checkedAt: Date.now()
+      };
+      await chrome.storage.local.set({ [STORAGE_KEYS.updateInfo]: info });
+      chrome.action.setBadgeText({ text: '●' });
+      chrome.action.setBadgeBackgroundColor({ color: '#667eea' });
+      return info;
+    } else {
+      // 已是最新版，清除旧缓存
+      chrome.action.setBadgeText({ text: '' });
+      await chrome.storage.local.remove(STORAGE_KEYS.updateInfo);
+      return null;
+    }
+  } catch {
+    return null;
+  }
+}
+
+async function checkUpdate() {
+  await checkUpdateCore();
+}
+
+async function checkUpdateAndRespond() {
+  // 先检查 storage 中是否有缓存（离线时也能用）
+  const cached = await chrome.storage.local.get(STORAGE_KEYS.updateInfo);
+  if (cached[STORAGE_KEYS.updateInfo]) return { ok: true, hasUpdate: true, info: cached[STORAGE_KEYS.updateInfo] };
+  // 无缓存则主动检查一次（可能刚启动还没触发 alarm）
+  const info = await checkUpdateCore();
+  return info
+    ? { ok: true, hasUpdate: true, info }
+    : { ok: true, hasUpdate: false, info: null };
+}
+
+async function dismissUpdate(version) {
+  await chrome.storage.session.set({ [STORAGE_KEYS.updateDismissed]: version });
+  return { ok: true };
+}
+
+// 启动时检查一次 + 定时检查
+checkUpdate();
+chrome.alarms.create('jt-check-update', { periodInMinutes: UPDATE_CHECK_INTERVAL_MIN });
+chrome.alarms.onAlarm.addListener(alarm => {
+  if (alarm.name === 'jt-check-update') checkUpdate();
+});
