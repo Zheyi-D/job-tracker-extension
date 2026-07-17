@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "求职投递追踪",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "投递简历后一键记录：自动抓取公司/岗位/链接，同步到飞书多维表格",
   "author": "Zheyi-D",
 
