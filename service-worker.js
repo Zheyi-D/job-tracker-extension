@@ -176,10 +176,7 @@ async function checkUpdate() {
 }
 
 async function checkUpdateAndRespond() {
-  // 先检查 storage 中是否有缓存（离线时也能用）
-  const cached = await chrome.storage.local.get(STORAGE_KEYS.updateInfo);
-  if (cached[STORAGE_KEYS.updateInfo]) return { ok: true, hasUpdate: true, info: cached[STORAGE_KEYS.updateInfo] };
-  // 无缓存则主动检查一次（可能刚启动还没触发 alarm）
+  // 先重新检测一次，确保缓存不过期（用户可能刚更新了本地版本）
   const info = await checkUpdateCore();
   return info
     ? { ok: true, hasUpdate: true, info }
