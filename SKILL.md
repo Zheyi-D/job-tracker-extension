@@ -2,9 +2,11 @@
 name: 求职投递追踪插件
 slug: job-tracker-feishu-skill
 displayName: 求职投递追踪插件
-version: latest
+version: 1.0.0
 description: 安装「求职投递追踪」Chrome 插件并连通飞书多维表格——克隆最新代码（或 git pull 更新已有目录）、引导完成飞书开放平台配置、调用飞书 OpenAPI 自动建好投递记录表、输出配置项。用户只需完成少量网页端手动操作并回报凭证，建表全自动。
 ---
+
+> 上面 `version` 只是 SkillHub 的标识字段；实际代码永远从 **main 分支** `git clone`/`git pull` 拿最新版，不会写死某个版本。
 
 # 求职投递追踪 — Skill
 
