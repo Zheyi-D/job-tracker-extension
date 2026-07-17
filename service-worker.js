@@ -144,10 +144,11 @@ function compareVersions(a, b) {
 async function checkUpdateCore() {
   try {
     const resp = await fetch(UPDATE_REPO_API, { headers: { Accept: 'application/vnd.github+json' } });
-    if (!resp.ok) return null;
+    if (!resp.ok) { console.log('[update] GitHub API 返回', resp.status); return null; }
     const release = await resp.json();
     const remoteVer = (release.tag_name || '').replace(/^v/, '');
     const localVer = chrome.runtime.getManifest().version;
+    console.log('[update] 远端:', remoteVer, '本地:', localVer);
     if (compareVersions(remoteVer, localVer) > 0) {
       const info = {
         version: remoteVer,
@@ -162,11 +163,13 @@ async function checkUpdateCore() {
       return info;
     } else {
       // 已是最新版，清除旧缓存
+      console.log('[update] 已是最新版，清除缓存');
       chrome.action.setBadgeText({ text: '' });
       await chrome.storage.local.remove(STORAGE_KEYS.updateInfo);
       return null;
     }
-  } catch {
+  } catch (err) {
+    console.log('[update] 检测失败:', err.message || err);
     return null;
   }
 }

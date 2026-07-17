@@ -268,6 +268,7 @@ let dismissedVersion = '';
 
 async function showUpdateIfAvailable() {
   const resp = await chrome.runtime.sendMessage({ type: 'JT_CHECK_UPDATE' });
+  console.log('[update] sidepanel 检测结果:', resp);
   if (!resp || !resp.hasUpdate || !resp.info) return;
   // 检查是否已在本会话中关闭过此版本
   if (resp.info.version === dismissedVersion) return;
