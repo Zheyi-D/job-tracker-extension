@@ -2,8 +2,8 @@
 name: 求职投递追踪插件
 slug: job-tracker-feishu-skill
 displayName: 求职投递追踪插件
-version: 1.0.0
-description: 安装「求职投递追踪」Chrome 插件并连通飞书多维表格——克隆代码、引导完成飞书开放平台配置、调用飞书 OpenAPI 自动建好投递记录表、输出配置项。用户只需完成少量网页端手动操作并回报凭证，建表全自动。
+version: latest
+description: 安装「求职投递追踪」Chrome 插件并连通飞书多维表格——克隆最新代码（或 git pull 更新已有目录）、引导完成飞书开放平台配置、调用飞书 OpenAPI 自动建好投递记录表、输出配置项。用户只需完成少量网页端手动操作并回报凭证，建表全自动。
 ---
 
 # 求职投递追踪 — Skill
@@ -37,13 +37,19 @@ description: 安装「求职投递追踪」Chrome 插件并连通飞书多维表
 
 ## 场景 A：主流程（agent 自动建表）
 
-### Step 1: 获取代码
+### Step 1: 获取最新代码
+
+不要写死版本号，始终拿最新 main 分支：
 
 ```bash
-git clone https://github.com/Zheyi-D/job-tracker-extension.git
+if [ -d job-tracker-extension ]; then
+  cd job-tracker-extension && git pull origin main
+else
+  git clone https://github.com/Zheyi-D/job-tracker-extension.git
+fi
 ```
 
-没有 git 就让用户下载 ZIP 并解压：
+没有 git 就让用户下载最新 ZIP 并解压（覆盖旧目录）：
 https://github.com/Zheyi-D/job-tracker-extension/archive/refs/heads/main.zip
 
 ### Step 2: 加载扩展 🙋（用户手动）
