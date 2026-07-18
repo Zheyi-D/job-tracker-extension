@@ -2,7 +2,7 @@
 name: 投递秒同步
 slug: job-tracker-feishu-skill
 displayName: 投递秒同步
-version: 1.0.0
+version: 1.0.2
 description: 安装「求职投递追踪」Chrome 插件并连通飞书多维表格——克隆最新代码（或 git pull 更新已有目录）、引导完成飞书开放平台配置、调用飞书 OpenAPI 自动建好投递记录表、输出配置项。用户只需完成少量网页端手动操作并回报凭证，建表全自动。
 ---
 
